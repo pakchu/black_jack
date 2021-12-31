@@ -28,7 +28,7 @@ fn user_choice() -> bool {
 
 fn init_trump_deck() -> Vec<Trump<'static>> {
     let mut deck: Vec<Trump> = Vec::new();
-    for num in 1..13{
+    for num in 1..=13{
         for shape in vec!["spade", "clover", "heart", "diamond"] {
             deck.push(Trump{
                 number : num,
