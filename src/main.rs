@@ -80,7 +80,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
     my_cards.push(deck.pop().unwrap());
     println!("you got {:?}\n", my_cards[0]);
     
-    println!("---------------------------------");
+    println!("*********************************");
     println!("dealer getting card");
     dealer_cards.push(deck.pop().unwrap());
 
@@ -89,7 +89,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
     my_cards.push(deck.pop().unwrap());
     println!("you got {:?}\n", my_cards[1]);
 
-    println!("---------------------------------");
+    println!("*********************************");
     println!("dealer getting card");
     dealer_cards.push(deck.pop().unwrap());
     println!("dealer's open card {:?}\n", dealer_cards[1]);
@@ -210,8 +210,12 @@ fn main() {
         bet_str.pop();
 
         bet = bet_str.parse().unwrap();
-        if bet <= budget {
+        if bet <= budget && bet > 0 {
             println!("your current bet: ${}", bet);
+        }
+        else if !(bet > 0) {
+            println!("invalid bet!");
+            continue;
         }
         else {
             println!("your bet is larger than your budget. \nplease enter valid bet.");
