@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{self};
 use rand::prelude::*;
 
 #[derive(Debug)]
