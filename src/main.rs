@@ -49,7 +49,7 @@ fn calculate(cards: &Vec<Trumps>) -> u32 {
     for card in cards{
         if card.number == 1 {
             num_of_aces += 1;
-            result += 10;
+            result += 11;
         }
         else if card.number > 10 {
             result += 10;
@@ -60,7 +60,7 @@ fn calculate(cards: &Vec<Trumps>) -> u32 {
     }
 
     while result > 21 && num_of_aces != 0 {
-        result -= 9;
+        result -= 10;
         num_of_aces -= 1;
     }
 
