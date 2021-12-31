@@ -2,7 +2,7 @@ use std::io;
 use rand::prelude::*;
 
 #[derive(Debug)]
-struct Trumps<'a>{
+struct Trump<'a>{
     number: u32,
     shapes: &'a str,
 }
@@ -26,11 +26,11 @@ fn user_choice() -> bool {
     }
 }
 
-fn init_trump_deck() -> Vec<Trumps<'static>> {
-    let mut deck: Vec<Trumps> = Vec::new();
+fn init_trump_deck() -> Vec<Trump<'static>> {
+    let mut deck: Vec<Trump> = Vec::new();
     for num in 1..13{
         for shape in vec!["spade", "clover", "heart", "diamond"] {
-            deck.push(Trumps{
+            deck.push(Trump{
                 number : num,
                 shapes : shape,
             });
@@ -43,7 +43,7 @@ fn init_trump_deck() -> Vec<Trumps<'static>> {
     return deck;
 }
 
-fn calculate(cards: &Vec<Trumps>) -> u32 {
+fn calculate(cards: &Vec<Trump>) -> u32 {
     let mut result: u32 = 0;
     let mut num_of_aces: u32 = 0;
     for card in cards{
@@ -68,8 +68,8 @@ fn calculate(cards: &Vec<Trumps>) -> u32 {
 }
 
 fn process_game<'game>(bet: i32 ) -> i32 {
-    let mut my_cards: Vec<Trumps> = vec![];
-    let mut dealer_cards: Vec<Trumps> = vec![];
+    let mut my_cards: Vec<Trump> = vec![];
+    let mut dealer_cards: Vec<Trump> = vec![];
 
     // init trump deck (shuffled)
     let mut deck = init_trump_deck();
@@ -81,7 +81,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
     println!("you got {:?}\n", my_cards[0]);
     
     println!("*********************************");
-    println!("dealer getting card");
+    println!("dealer getting card\n");
     dealer_cards.push(deck.pop().unwrap());
 
     println!("---------------------------------");
@@ -143,7 +143,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
         println!("---------------------------------");
         println!("dealer getting card");
         dealer_cards.push(deck.pop().unwrap());
-        let len = my_cards.len();
+        let len = dealer_cards.len();
         println!("dealer's open card {:?}\n", dealer_cards[len - 1]);
     }
 
@@ -151,7 +151,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
 
     if dealer_result > 21 {
         println!("dealer's cards: {:?}\nsum: {}", dealer_cards, dealer_result);
-        println!("dealer has bursted!");
+        println!("dealer has bursted!\nyou won!");
         return bet;
     }
 
