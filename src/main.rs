@@ -138,7 +138,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
         return -bet;
     }
 
-    println!("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\nnow, dealer is drawing cards");
+    println!("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\nnow, dealer is drawing cards\n");
     while calculate(&dealer_cards) < 17 {
         println!("---------------------------------");
         println!("dealer getting card");
@@ -222,8 +222,8 @@ fn main() {
             continue;
         }
         budget += process_game(bet);
-        println!("your initial budget: ${}", budget_str.parse::<i32>().unwrap());
-        println!("your current budget: ${}", budget);
+        println!("\nyour initial budget: ${}", budget_str.parse::<i32>().unwrap());
+        println!("your current budget: ${}\n", budget);
         println!("play one more time?");
         choice = user_choice();
     }
