@@ -1,7 +1,7 @@
 use std::io::{self};
 use rand::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Trump<'a>{
     number: u32,
     shapes: &'a str,
@@ -67,12 +67,13 @@ fn calculate(cards: &Vec<Trump>) -> u32 {
     result
 }
 
-fn process_game<'game>(bet: i32 ) -> i32 {
+fn process_game<'game>(origin_deck: &mut Vec<Trump>, bet: i32 ) -> i32 {
     let mut my_cards: Vec<Trump> = vec![];
     let mut dealer_cards: Vec<Trump> = vec![];
 
     // init trump deck (shuffled)
     let mut deck = init_trump_deck();
+    *origin_deck = deck.clone();
 
     println!("--initial draw--");
     println!("---------------------------------");
@@ -160,7 +161,7 @@ fn process_game<'game>(bet: i32 ) -> i32 {
 
     if user_result > dealer_result {
         println!("you won!");
-        return bet
+        return bet;
     }
     else if user_result < dealer_result {
         println!("you lost!");
@@ -174,6 +175,8 @@ fn process_game<'game>(bet: i32 ) -> i32 {
 }
 
 fn main() {
+    let mut origin_deck: Vec<Trump> = Vec::new();
+    
     // intro
     println!("Welcom to Black Jack game!");
     println!("How much money you have: ");
@@ -199,7 +202,7 @@ fn main() {
 
     let mut choice = true;
 
-    while bet > 0 && choice{
+    while bet > 0 && choice {
         println!("how much will you bet?");
         // getting user input for bet amount
         let mut bet_str = String::new();
@@ -221,10 +224,18 @@ fn main() {
             println!("your bet is larger than your budget. \nplease enter valid bet.");
             continue;
         }
-        budget += process_game(bet);
+        budget += process_game(&mut origin_deck, bet);
         println!("\nyour initial budget: ${}", budget_str.parse::<i32>().unwrap());
         println!("your current budget: ${}\n", budget);
-        println!("play one more time?");
-        choice = user_choice();
+        println!("deck was: {:?}\n", origin_deck);
+        if budget == 0 {
+            println!("you have no money. get out!");
+            break;
+        }
+        else{
+            println!("play one more time?");
+            choice = user_choice();
+        }
     }
+    
 }
