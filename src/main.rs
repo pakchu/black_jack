@@ -227,7 +227,11 @@ fn main() {
         budget += process_game(&mut origin_deck, bet);
         println!("\nyour initial budget: ${}", budget_str.parse::<i32>().unwrap());
         println!("your current budget: ${}\n", budget);
-        println!("deck was: {:?}\n", origin_deck);
+        println!("want to open deck?");
+        let print = user_choice();
+        if print {
+            println!("deck was: {:?}\n", origin_deck);
+        }
         if budget == 0 {
             println!("you have no money. get out!");
             break;
