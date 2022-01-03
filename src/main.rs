@@ -3,7 +3,7 @@ use rand::prelude::*;
 
 #[derive(Debug, Clone)]
 struct Trump<'a>{
-    number: u32,
+    number: u8,
     shapes: &'a str,
 }
 
@@ -43,8 +43,8 @@ fn init_trump_deck() -> Vec<Trump<'static>> {
     return deck;
 }
 
-fn calculate(cards: &Vec<Trump>) -> u32 {
-    let mut result: u32 = 0;
+fn calculate(cards: &Vec<Trump>) -> u8 {
+    let mut result: u8 = 0;
     let mut num_of_aces: u32 = 0;
     for card in cards{
         if card.number == 1 {
