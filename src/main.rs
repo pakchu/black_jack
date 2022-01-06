@@ -110,68 +110,162 @@ fn process_game<'game>(origin_deck: &mut Vec<Trump>, bet: i32 ) -> i32 {
             return bet * 3 / 2;
         }
     }
-    else if dealer_result == 21 {
-        println!("dealer's cards: {:?}", dealer_cards);
-        println!("your cards: {:?}", my_cards);
-        println!("dealer's cards are black jack!\nyou lost");
-        return -bet;
+    println!("dealer's open card {:?}\n", dealer_cards[1]);
+    println!("your cards: {:?}\nsum: {}", my_cards, user_result);
+    
+    let mut insurance = false;
+    
+    if dealer_cards[1].number == 1 {
+        println!("insurance?");
+        insurance = user_choice();
     }
 
-    let mut choice = true;
+    let mut insured: i32 = 0;
 
-    while calculate(&my_cards) < 21 && choice {
-        println!("your cards: {:?}\nsum: {}", my_cards, calculate(&my_cards));
-        println!("hit?");
-        choice = user_choice();
-        if choice{
-            println!("---------------------------------");
-            println!("you are getting card");
-            my_cards.push(deck.pop().unwrap());
-            let len = my_cards.len();
-            println!("you got {:?}\n", my_cards[len-1]);
+    if insurance {
+        println!("How much money will you insurance?\ninsurance must be smaller than 1/2 of bet\nyour bet: {}", bet);
+        while insurance {
+            // getting user input for budget
+            let mut insurance_str = String::new();
+            
+            io::stdin().read_line(&mut insurance_str).unwrap();
+            
+            // poping '\n'
+            insurance_str.pop();
+
+            insured = insurance_str.parse::<i32>().unwrap();
+
+            if insured <= 0 || 2 * insured > bet {
+                println!("invalid insurance!");
+                insured = 0;
+                continue;
+            }
+            else {
+                println!("you insured ${}", insured);
+                break;
+            }
         }
     }
-    user_result = calculate(&my_cards);
 
-    if user_result > 21 {
-        println!("your cards: {:?}\nsum: {}", my_cards, user_result);
-        println!("you've bursted!");
-        return -bet;
-    }
+    println!("bet Double Down?");
+    let double_down = user_choice();    
 
-    println!("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\nnow, dealer is drawing cards\n");
-    while calculate(&dealer_cards) < 17 {
+    if double_down {
         println!("---------------------------------");
-        println!("dealer getting card");
-        dealer_cards.push(deck.pop().unwrap());
-        let len = dealer_cards.len();
-        println!("dealer's open card {:?}\n", dealer_cards[len - 1]);
-    }
+        println!("you are getting card");
+        my_cards.push(deck.pop().unwrap());
+        let len = my_cards.len();
+        println!("you got {:?}\n", my_cards[len-1]);
 
-    dealer_result = calculate(&dealer_cards);
+        user_result = calculate(&my_cards);
 
-    if dealer_result > 21 {
+        if user_result > 21 {
+            println!("your cards: {:?}\nsum: {}", my_cards, user_result);
+            println!("you've bursted!");
+            return -2 * bet - insured;
+        }
+
+        if dealer_result == 21 {
+            println!("dealer cards: {:?}\nsum: {}", dealer_cards, dealer_result);
+            println!("dealer's black jack!");
+            return -2 * bet + insured * 2;
+        }
+
+        println!("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\nnow, dealer is drawing cards\n");
+        while calculate(&dealer_cards) < 17 {
+            println!("---------------------------------");
+            println!("dealer getting card");
+            dealer_cards.push(deck.pop().unwrap());
+            let len = dealer_cards.len();
+            println!("dealer's open card {:?}\n", dealer_cards[len - 1]);
+        }
+
+        dealer_result = calculate(&dealer_cards);
+
+        if dealer_result > 21 {
+            println!("dealer's cards: {:?}\nsum: {}", dealer_cards, dealer_result);
+            println!("dealer has bursted!\nyou won!");
+            return 2 * bet - insured;
+        }
+
         println!("dealer's cards: {:?}\nsum: {}", dealer_cards, dealer_result);
-        println!("dealer has bursted!\nyou won!");
-        return bet;
-    }
+        println!("your cards: {:?}\nsum: {}", my_cards, user_result);
 
-    println!("dealer's cards: {:?}\nsum: {}", dealer_cards, dealer_result);
-    println!("your cards: {:?}\nsum: {}", my_cards, user_result);
-
-    if user_result > dealer_result {
-        println!("you won!");
-        return bet;
-    }
-    else if user_result < dealer_result {
-        println!("you lost!");
-        return -bet;
+        if user_result > dealer_result {
+            println!("you won!");
+            return 2 * bet- insured;
+        }
+        else if user_result < dealer_result {
+            println!("you lost!");
+            return -2 * bet- insured;
+        }
+        else {
+            println!("its a draw!");
+            return 0 - insured;
+        }
     }
     else {
-        println!("its a draw!");
-        return 0;
-    }
+        let mut choice = true;
 
+        while calculate(&my_cards) < 21 && choice {
+            println!("your cards: {:?}\nsum: {}", my_cards, calculate(&my_cards));
+            println!("hit?");
+            choice = user_choice();
+            if choice{
+                println!("---------------------------------");
+                println!("you are getting card");
+                my_cards.push(deck.pop().unwrap());
+                let len = my_cards.len();
+                println!("you got {:?}\n", my_cards[len-1]);
+            }
+        }
+        user_result = calculate(&my_cards);
+
+        if user_result > 21 {
+            println!("your cards: {:?}\nsum: {}", my_cards, user_result);
+            println!("you've bursted!");
+            return -bet;
+        }
+
+        if dealer_result == 21 {
+            println!("dealer cards: {:?}\nsum: {}", dealer_cards, dealer_result);
+            println!("dealer's black jack!");
+            return bet + insured * 2;
+        }
+
+        println!("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&\nnow, dealer is drawing cards\n");
+        while calculate(&dealer_cards) < 17 {
+            println!("---------------------------------");
+            println!("dealer getting card");
+            dealer_cards.push(deck.pop().unwrap());
+            let len = dealer_cards.len();
+            println!("dealer's open card {:?}\n", dealer_cards[len - 1]);
+        }
+
+        dealer_result = calculate(&dealer_cards);
+
+        if dealer_result > 21 {
+            println!("dealer's cards: {:?}\nsum: {}", dealer_cards, dealer_result);
+            println!("dealer has bursted!\nyou won!");
+            return bet - insured;
+        }
+
+        println!("dealer's cards: {:?}\nsum: {}", dealer_cards, dealer_result);
+        println!("your cards: {:?}\nsum: {}", my_cards, user_result);
+
+        if user_result > dealer_result {
+            println!("you won!");
+            return bet - insured;
+        }
+        else if user_result < dealer_result {
+            println!("you lost!");
+            return -bet - insured;
+        }
+        else {
+            println!("its a draw!");
+            return 0 - insured;
+        }
+    }
 }
 
 fn main() {
@@ -224,8 +318,10 @@ fn main() {
             println!("your bet is larger than your budget. \nplease enter valid bet.");
             continue;
         }
-        budget += process_game(&mut origin_deck, bet);
+        let difference = process_game(&mut origin_deck, bet);
+        budget += difference;
         println!("\nyour initial budget: ${}", budget_str.parse::<i32>().unwrap());
+        println!("your last budget: ${}", budget - difference);
         println!("your current budget: ${}\n", budget);
         println!("want to open deck?");
         let print = user_choice();
